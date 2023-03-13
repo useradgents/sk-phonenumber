@@ -74,4 +74,18 @@ class TestSKPhoneNumber: SKTestViewModel(
         )
     }
 
+    @Test
+    fun `Numéro US`() {
+        val skPhoneNumber = SKPhoneNumber()
+        skPhoneNumber.number = "+17814853600"
+        assertEquals(
+            expected = "(781) 485-3600",
+            actual = skPhoneNumber.inputNumber.value
+        )
+        assertEquals(
+            expected = "+17814853600",
+            actual = skPhoneNumber.number
+        )
+    }
+
 }

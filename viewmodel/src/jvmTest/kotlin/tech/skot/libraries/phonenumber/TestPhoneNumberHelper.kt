@@ -1,6 +1,7 @@
 package tech.skot.libraries.phonenumber
 
 import org.junit.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class TestPhoneNumberHelper {
@@ -63,8 +64,12 @@ class TestPhoneNumberHelper {
             phoneNumbersHelper.isValid(33,"0298566598")
         }
 
-        assertTrue {
+        assertFalse {
             phoneNumbersHelper.isValid(33,"2985665")
+        }
+
+        assertTrue {
+            phoneNumbersHelper.isValid(1,"7814853600")
         }
 
     }

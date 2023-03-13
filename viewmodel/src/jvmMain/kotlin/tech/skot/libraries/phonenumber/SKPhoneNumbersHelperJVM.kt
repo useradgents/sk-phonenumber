@@ -26,7 +26,7 @@ class SKPhoneNumbersHelperJVM : SKPhoneNumbersHelper {
     }
 
     private fun String.toLongNationalNumber(): Long? = try {
-        filter { !it.isWhitespace() }.takeIf { it.isNotEmpty() }?.toLong()
+        filter { it.isDigit() }.takeIf { it.isNotEmpty() }?.toLong()
     } catch (ex: Exception) {
         SKLog.e(ex, "numéro national invalide : $this")
         null
