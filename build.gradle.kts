@@ -3,7 +3,7 @@ buildscript {
         google()
         mavenCentral()
         mavenLocal()
-
+        maven { setUrl("https://jitpack.io") }
     }
 
     dependencies {
@@ -25,6 +25,7 @@ allprojects {
         google()
         mavenLocal()
         mavenCentral()
+        maven { setUrl("https://jitpack.io") }
     }
 
     apply(plugin = "maven-publish")
