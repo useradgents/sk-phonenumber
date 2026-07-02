@@ -9,7 +9,7 @@ kotlin {
 
         val commonMain by getting {
             dependencies {
-                api("tech.skot.libraries.sk-phone:viewmodel:0.0.0_1.2.7")
+                api("tech.skot.libraries.sk-phone:viewmodel:1.0.0_1.4.5-ua")
             }
         }
 

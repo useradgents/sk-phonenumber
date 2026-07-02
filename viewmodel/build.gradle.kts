@@ -9,6 +9,7 @@ plugins {
 }
 
 android {
+    namespace = "tech.skot.libraries.phonenumber.viewmodel"
     androidBaseConfig(project)
 }
 
@@ -18,7 +19,7 @@ kotlin {
 
     //ios()
 
-    android {
+    androidTarget {
         publishLibraryVariants("release")
     }
 
@@ -34,19 +35,19 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
-                implementation("io.michaelrocks:libphonenumber-android:8.13.5")
+                implementation("io.michaelrocks:libphonenumber-android:9.0.32")
             }
         }
 
         val androidInstrumentedTest by getting {
             dependencies {
-                implementation("androidx.test.ext:junit-ktx:1.1.5")
+                implementation("androidx.test.ext:junit-ktx:1.3.0")
             }
         }
 
         val jvmMain by getting {
             dependencies {
-                implementation("com.googlecode.libphonenumber:libphonenumber:8.13.5")
+                implementation("com.googlecode.libphonenumber:libphonenumber:9.0.33")
             }
         }
 

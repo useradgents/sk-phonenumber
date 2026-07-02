@@ -10,7 +10,8 @@ class SKPhoneNumber(
     hint: String? = null,
     defaultErrorMessage: String? = null,
     afterValidation: ((SKInput.Validity) -> Unit)? = null,
-    private val defaultIndicatif: Indicatif? = Indicatif(33, "FR"),
+    val defaultIndicatif: Indicatif? = Indicatif(33, "FR"),
+    val phoneType : PhoneType? = null
 ) {
 
     private val phoneNumbersHelper: SKPhoneNumbersHelper = get()
@@ -40,7 +41,7 @@ class SKPhoneNumber(
         }
 
         override fun validate(str: String?): Validity {
-            return if (phoneNumbersHelper.isValid(comboIndicatif.value?.code, str?.trim())) {
+            return if (phoneNumbersHelper.isValid(comboIndicatif.value?.code, str?.trim(), phoneType)) {
                 Validity.Valid
             } else {
                 Validity.Error(defaultErrorMessage)

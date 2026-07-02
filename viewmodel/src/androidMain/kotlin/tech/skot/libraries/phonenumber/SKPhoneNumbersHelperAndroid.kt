@@ -1,6 +1,7 @@
 package tech.skot.libraries.phonenumber
 
 import android.content.Context
+import io.michaelrocks.libphonenumber.android.NumberParseException
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.michaelrocks.libphonenumber.android.Phonenumber.PhoneNumber
 import tech.skot.core.SKLog
@@ -15,13 +16,18 @@ class SKPhoneNumbersHelperAndroid(applicationContext: Context): SKPhoneNumbersHe
     }
 
     override fun parse(num: String): Pair<Indicatif, Long>? {
-        val phoneNumber = util.parse(num, "FR")
-        return Pair(
-            Indicatif(
-                phoneNumber.countryCode,
-                util.getRegionCodeForCountryCode(phoneNumber.countryCode)
-            ), phoneNumber.nationalNumber
-        )
+        return try {
+            val phoneNumber = util.parse(num, "FR")
+             Pair(
+                Indicatif(
+                    phoneNumber.countryCode,
+                    util.getRegionCodeForCountryCode(phoneNumber.countryCode)
+                ), phoneNumber.nationalNumber
+            )
+        } catch (e : NumberParseException){
+            null
+        }
+
     }
 
     private fun String.toLongNationalNumber(): Long? = try {
@@ -69,10 +75,20 @@ class SKPhoneNumbersHelperAndroid(applicationContext: Context): SKPhoneNumbersHe
     }
 
 
-    override fun isValid(code: Int?, nationalNum: String?): Boolean {
+    override fun isValid(code: Int?, nationalNum: String?, phoneType: PhoneType?): Boolean {
         return code != null && !nationalNum.isNullOrBlank() && numFrom(
             code,
             nationalNum
-        )?.let { util.isValidNumber(it) } == true
+        )?.let { util.isValidNumber(it) && it.isPhoneType(phoneType)} == true
     }
+
+
+    private fun PhoneNumber.isPhoneType(phoneType: PhoneType?) : Boolean {
+        return when(phoneType){
+            PhoneType.MOBILE -> util.getNumberType(this) == PhoneNumberUtil.PhoneNumberType.MOBILE
+            PhoneType.FIXED -> util.getNumberType(this) == PhoneNumberUtil.PhoneNumberType.FIXED_LINE
+            else -> true
+        }
+    }
+
 }
