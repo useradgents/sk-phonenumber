@@ -1,77 +1,46 @@
 import tech.skot.tools.gradle.androidBaseConfig
 
 plugins {
-    kotlin("multiplatform")
     id("com.android.library")
     id("maven-publish")
-    id("kotlinx-serialization")
     signing
 }
 
 android {
     namespace = "tech.skot.libraries.phonenumber.viewmodel"
     androidBaseConfig(project)
-}
-
-kotlin {
-
-    jvm()
-
-    //ios()
-
-    androidTarget {
-        publishLibraryVariants("release")
-    }
-
-
 
     sourceSets {
-
-        val commonMain by getting {
-            dependencies {
-                implementation("${tech.skot.Versions.group}:viewmodel:${tech.skot.Versions.skot}")
+        getByName("main") {
+            kotlin {
+                directories.add("src/commonMain/kotlin")
+                directories.add("src/androidMain/kotlin")
             }
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
         }
+    }
 
-        val androidMain by getting {
-            dependencies {
-                implementation("io.michaelrocks:libphonenumber-android:9.0.32")
-            }
-        }
-
-        val androidInstrumentedTest by getting {
-            dependencies {
-                implementation("androidx.test.ext:junit-ktx:1.3.0")
-            }
-        }
-
-        val jvmMain by getting {
-            dependencies {
-                implementation("com.googlecode.libphonenumber:libphonenumber:9.0.33")
-            }
-        }
-
-        val jvmTest by getting {
-            dependencies {
-                implementation("${tech.skot.Versions.group}:viewmodelTests:${tech.skot.Versions.skot}")
-            }
-        }
+    publishing {
+        singleVariant("release") { withSourcesJar() }
     }
 }
 
-
-tasks.dokkaHtmlPartial.configure {
-    suppressInheritedMembers.set(true)
+dependencies {
+    implementation("${tech.skot.Versions.group}:viewmodel:${tech.skot.Versions.skot}")
+    implementation("io.michaelrocks:libphonenumber-android:9.0.32")
+    androidTestImplementation("androidx.test.ext:junit-ktx:1.3.0")
 }
 
-tasks.dokkaGfmPartial.configure {
-    suppressInheritedMembers.set(true)
-}
+val dokkaOutputDir = layout.buildDirectory.dir("dokkaHtml")
 
-val dokkaOutputDir = "$buildDir/dokka"
-
-tasks.getByName<org.jetbrains.dokka.gradle.DokkaTask>("dokkaHtml") {
-    outputDirectory.set(file(dokkaOutputDir))
+dokka {
+    moduleName.set("sk-phonenumber")
+    dokkaPublications.html {
+        outputDirectory.set(dokkaOutputDir)
+    }
+    dokkaSourceSets.configureEach {
+        suppressInheritedMembers.set(true)
+    }
 }
 
 val deleteDokkaOutputDir by tasks.register<Delete>("deleteDokkaOutputDirectory") {
@@ -84,6 +53,14 @@ val javadocJar = tasks.register<Jar>("javadocJar") {
     from(dokkaOutputDir)
 }
 
+// Before 2.0.0, Kotlin Multiplatform created the publication: it is now declared here.
+afterEvaluate {
+    publishing {
+        publications.create<MavenPublication>("release") {
+            from(components["release"])
+        }
+    }
+}
 
 if (!localPublication) {
     val publication = getPublication(project)
